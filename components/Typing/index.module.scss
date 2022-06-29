@@ -1,0 +1,41 @@
+.article {
+  font-size: 22px;
+  letter-spacing: 0.8px;
+  line-height: 2.5;
+  animation: fadeIn 1s ease;
+  border-radius: 8px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 30px;
+
+  .letter_unit {
+    transition: all 0.1s;
+
+    &.undone {
+      color: #333;
+    }
+
+    &.right {
+      color: #3ec70b;
+      &.blank {
+        border-bottom: 2px solid #3ec70b;
+      }
+    }
+
+    &.wrong {
+      color: #f94c66;
+      &.blank {
+        border-bottom: 2px solid #f94c66;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-2vw);
+  }
+  100% {
+    opacity: 1;
+  }
+}

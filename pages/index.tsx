@@ -1,6 +1,7 @@
 import type { NextPage, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import css from '../styles/Home.module.scss'
+import Typing from '../components/Typing'
 import { useCallback, useEffect, useState } from 'react'
 import LETTERS from '../constants/LETTERS'
 
@@ -12,11 +13,20 @@ type Letter = {
   status: string
 }
 
-type ArticleList = Letter[]
+export type ArticleList = Letter[]
 
 type Props = {
   article: string
 }
+
+type User = {
+  id: string
+  name: string
+  articleList: ArticleList
+  currentIndex: number
+}
+
+type Users = User[]
 
 const Home: NextPage<Props> = ({ article }) => {
   const initArticleList = useCallback(
@@ -34,10 +44,49 @@ const Home: NextPage<Props> = ({ article }) => {
     [article]
   )
 
+  const [users, setUsers] = useState<Users>([
+    {
+      id: '1',
+      name: '张三',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+    {
+      id: '2',
+      name: '李四',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+    {
+      id: '3',
+      name: '李四',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+    {
+      id: '4',
+      name: '李四',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+  ])
+
   const [articleList, setArticleList] = useState<ArticleList>(
     initArticleList(article)
   )
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:3002/')
+
+    ws.onopen = function () {
+      console.log('open')
+    }
+
+    ws.onmessage = function (message: { data: string }) {
+      console.log('message', message.data)
+    }
+  }, [])
 
   useEffect(() => {
     const keydownListener = ({ key }: any) => {
@@ -80,19 +129,11 @@ const Home: NextPage<Props> = ({ article }) => {
         <title>打字比赛</title>
       </Head>
 
-      <main className={css.home}>
-        <article className={css.article}>
-          {articleList.map(({ value, status }, index) => (
-            <span
-              className={`${css.letter_unit} ${css[status]} ${
-                value === ' ' ? css.blank : ''
-              }`}
-              key={index}
-            >
-              {value}
-            </span>
-          ))}
-        </article>
+      <main className={css.playground}>
+        {users.map(user => (
+          <Typing articleList={user.articleList} key={user.id} />
+        ))}
+        {/* <Typing articleList={articleList} /> */}
       </main>
     </>
   )

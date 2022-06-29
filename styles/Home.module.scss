@@ -1,45 +1,10 @@
-.home {
+.playground {
+  width: 90vw;
+  min-width: 1200px;
+  height: 100vh;
   display: grid;
-  justify-content: center;
-  padding-top: 15vh;
-
-  .article {
-    width: 60vw;
-    font-size: 22px;
-    letter-spacing: 0.8px;
-    line-height: 2.5;
-    animation: fadeIn 1s ease;
-
-    .letter_unit {
-      transition: all 0.2s;
-
-      &.undone {
-        color: #333;
-      }
-
-      &.right {
-        color: #3ec70b;
-        &.blank {
-          border-bottom: 2px solid #3ec70b;
-        }
-      }
-
-      &.wrong {
-        color: #f94c66;
-        &.blank {
-          border-bottom: 2px solid #f94c66;
-        }
-      }
-    }
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translate(-100px);
-  }
-  100% {
-    opacity: 1;
-  }
+  grid-template-columns: repeat(2, auto);
+  gap: 50px;
+  margin: 0 auto;
+  padding: 50px 0;
 }
