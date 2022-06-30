@@ -29,20 +29,17 @@ type User = {
 type Users = User[]
 
 const Home: NextPage<Props> = ({ article }) => {
-  const initArticleList = useCallback(
-    (article: string) => {
-      const articleList = []
-      for (let letter of article) {
-        articleList.push({
-          value: letter,
-          status: 'undone',
-        })
-      }
+  const initArticleList = useCallback((article: string) => {
+    const articleList = []
+    for (let letter of article) {
+      articleList.push({
+        value: letter,
+        status: 'undone',
+      })
+    }
 
-      return articleList
-    },
-    [article]
-  )
+    return articleList
+  }, [])
 
   const [users, setUsers] = useState<Users>([
     {
@@ -65,8 +62,6 @@ const Home: NextPage<Props> = ({ article }) => {
       console.log(data)
 
       const updateId = '2'
-
-      console.log({ users })
 
       const nextUsers = users.map(user => {
         const { id, articleList, currentIndex } = user
@@ -101,11 +96,9 @@ const Home: NextPage<Props> = ({ article }) => {
         return user
       })
 
-      console.log({ nextUsers })
-
       setUsers(nextUsers)
     },
-    []
+    [users]
   )
 
   useEffect(() => {
@@ -114,11 +107,13 @@ const Home: NextPage<Props> = ({ article }) => {
     ws.current.onopen = function () {
       console.log('open')
     }
+  }, [])
 
+  useEffect(() => {
     ws.current.onmessage = function (message: { data: string }) {
       handleMessage(JSON.parse(message.data))
     }
-  }, [])
+  }, [handleMessage])
 
   useEffect(() => {
     const keydownListener = ({ key }: { key: string }) => {
