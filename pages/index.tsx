@@ -2,7 +2,7 @@ import type { NextPage, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import css from '../styles/Home.module.scss'
 import Typing from '../components/Typing'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import LETTERS from '../constants/LETTERS'
 
 import path from 'path'
@@ -57,71 +57,82 @@ const Home: NextPage<Props> = ({ article }) => {
       articleList: initArticleList(article),
       currentIndex: 0,
     },
-    {
-      id: '3',
-      name: '李四',
-      articleList: initArticleList(article),
-      currentIndex: 0,
-    },
-    {
-      id: '4',
-      name: '李四',
-      articleList: initArticleList(article),
-      currentIndex: 0,
-    },
   ])
+  const ws = useRef<any>(null)
 
-  const [articleList, setArticleList] = useState<ArticleList>(
-    initArticleList(article)
+  const handleMessage = useCallback(
+    ({ data, isSelf }: { data: string; isSelf: boolean }) => {
+      console.log(data)
+
+      const updateId = '2'
+
+      console.log({ users })
+
+      const nextUsers = users.map(user => {
+        const { id, articleList, currentIndex } = user
+        if (id === updateId) {
+          const { value } = articleList[currentIndex]
+
+          if (data === 'Backspace') {
+            const nextIndex = currentIndex - 1
+
+            return {
+              ...user,
+              currentIndex: nextIndex,
+              articleList: articleList.map((letter, index) =>
+                index === nextIndex ? { ...letter, status: 'undone' } : letter
+              ),
+            }
+          }
+
+          const nextStatus = value === data ? 'right' : 'wrong'
+
+          return {
+            ...user,
+            currentIndex: currentIndex + 1,
+            articleList: articleList.map((letter, index) =>
+              index === currentIndex
+                ? { ...letter, status: nextStatus }
+                : letter
+            ),
+          }
+        }
+
+        return user
+      })
+
+      console.log({ nextUsers })
+
+      setUsers(nextUsers)
+    },
+    []
   )
-  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3002/')
+    ws.current = new WebSocket('ws://localhost:3002/')
 
-    ws.onopen = function () {
+    ws.current.onopen = function () {
       console.log('open')
     }
 
-    ws.onmessage = function (message: { data: string }) {
-      console.log('message', message.data)
+    ws.current.onmessage = function (message: { data: string }) {
+      handleMessage(JSON.parse(message.data))
     }
   }, [])
 
   useEffect(() => {
-    const keydownListener = ({ key }: any) => {
-      // filter ctrl shift ...other, only match 26 letters and space
+    const keydownListener = ({ key }: { key: string }) => {
       if (!LETTERS.includes(key)) {
         return
       }
 
-      const { value } = articleList[currentIndex]
-
-      if (key === 'Backspace') {
-        const nextIndex = currentIndex - 1
-        setCurrentIndex(nextIndex)
-        setArticleList(prevList =>
-          prevList.map((item, index) =>
-            index === nextIndex ? { ...item, status: 'undone' } : item
-          )
-        )
-        return
-      }
-
-      const nextStatus = value === key ? 'right' : 'wrong'
-
-      setArticleList(prevList =>
-        prevList.map((item, index) =>
-          index === currentIndex ? { ...item, status: nextStatus } : item
-        )
-      )
-      setCurrentIndex(prevIndex => prevIndex + 1)
+      ws.current.send(key)
     }
 
     document.addEventListener('keydown', keydownListener)
 
     return () => document.removeEventListener('keydown', keydownListener)
-  }, [currentIndex])
+  }, [])
 
   return (
     <>
@@ -133,7 +144,6 @@ const Home: NextPage<Props> = ({ article }) => {
         {users.map(user => (
           <Typing articleList={user.articleList} key={user.id} />
         ))}
-        {/* <Typing articleList={articleList} /> */}
       </main>
     </>
   )
