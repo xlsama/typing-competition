@@ -6,7 +6,7 @@
     "dev": "next dev & npm run server",
     "server": "nodemon ./server/index.js",
     "build": "next build",
-    "start": "next start",
+    "start": "next start & npm run server",
     "lint": "next lint"
   },
   "dependencies": {

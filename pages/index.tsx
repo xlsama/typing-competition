@@ -2,7 +2,7 @@ import type { NextPage, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import css from '../styles/Home.module.scss'
 import Typing from '../components/Typing'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import LETTERS from '../constants/LETTERS'
 
 import path from 'path'
@@ -20,13 +20,19 @@ type Props = {
 }
 
 type User = {
-  id: string
+  id: number
   name: string
   articleList: ArticleList
   currentIndex: number
 }
 
 type Users = User[]
+
+type Message = {
+  data: string
+  id: number
+  isSelf: boolean
+}
 
 const Home: NextPage<Props> = ({ article }) => {
   const initArticleList = useCallback((article: string) => {
@@ -43,14 +49,26 @@ const Home: NextPage<Props> = ({ article }) => {
 
   const [users, setUsers] = useState<Users>([
     {
-      id: '1',
-      name: '张三',
+      id: 1,
+      name: '1号',
       articleList: initArticleList(article),
       currentIndex: 0,
     },
     {
-      id: '2',
-      name: '李四',
+      id: 2,
+      name: '2号',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+    {
+      id: 3,
+      name: '3号',
+      articleList: initArticleList(article),
+      currentIndex: 0,
+    },
+    {
+      id: 4,
+      name: '4号',
       articleList: initArticleList(article),
       currentIndex: 0,
     },
@@ -58,11 +76,7 @@ const Home: NextPage<Props> = ({ article }) => {
   const ws = useRef<any>(null)
 
   const handleMessage = useCallback(
-    ({ data, isSelf }: { data: string; isSelf: boolean }) => {
-      console.log(data)
-
-      const updateId = '2'
-
+    ({ data, id: updateId, isSelf }: Message) => {
       const nextUsers = users.map(user => {
         const { id, articleList, currentIndex } = user
         if (id === updateId) {
@@ -137,7 +151,11 @@ const Home: NextPage<Props> = ({ article }) => {
 
       <main className={css.playground}>
         {users.map(user => (
-          <Typing articleList={user.articleList} key={user.id} />
+          <Typing
+            key={user.id}
+            articleList={user.articleList}
+            name={user.name}
+          />
         ))}
       </main>
     </>

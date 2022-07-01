@@ -4,22 +4,31 @@ const wss = new WebSocketServer({
   port: 3002,
 })
 
-wss.users = []
+const users = []
 
 wss.on('connection', function connection(ws, req) {
   console.log('server connected')
 
-  wss.users.push({
-    id: wss.users.length + 1,
-    ip: req.socket.remoteAddress,
+  const ip = req.socket.remoteAddress
+
+  users.push({
+    id: users.length + 1,
+    ip,
   })
 
   ws.on('message', async function message(data) {
-    const result = { data: data.toString() }
+    // console.log(users)
+
+    let result = { data: data.toString() }
+    const { id } = users.find(user => user.ip === ip)
 
     wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
-        result.isSelf = client === ws
+        const params = {
+          isSelf: client === ws,
+          id,
+        }
+        result = { ...result, ...params }
 
         client.send(JSON.stringify(result))
       }
