@@ -2,7 +2,7 @@ import type { NextPage, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import css from '../styles/Home.module.scss'
 import Typing from '../components/Typing'
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import LETTERS from '../constants/LETTERS'
 
 import path from 'path'
@@ -76,7 +76,7 @@ const Home: NextPage<Props> = ({ article }) => {
   const ws = useRef<any>(null)
 
   const handleMessage = useCallback(
-    ({ data, id: updateId, isSelf }: Message) => {
+    ({ data, id: updateId }: Message) => {
       const nextUsers = users.map(user => {
         const { id, articleList, currentIndex } = user
         if (id === updateId) {
