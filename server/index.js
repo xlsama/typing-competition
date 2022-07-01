@@ -11,14 +11,14 @@ wss.on('connection', function connection(ws, req) {
 
   const ip = req.socket.remoteAddress
 
-  users.push({
-    id: users.length + 1,
-    ip,
-  })
+  if (!users.map(user => user.ip).includes(ip)) {
+    users.push({
+      id: users.length + 1,
+      ip,
+    })
+  }
 
   ws.on('message', async function message(data) {
-    // console.log(users)
-
     let result = { data: data.toString() }
     const { id } = users.find(user => user.ip === ip)
 
