@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev & npm run server",
     "server": "nodemon ./server/index.js",
-    "build": "next build",
-    "start": "next start & npm run server",
+    "build": "next build & npm run server",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
