@@ -34,6 +34,8 @@ type Message = {
   isSelf: boolean
 }
 
+const Config = () => {}
+
 const Home: NextPage<Props> = ({ article }) => {
   const initArticleList = useCallback((article: string) => {
     const articleList = []
@@ -116,11 +118,13 @@ const Home: NextPage<Props> = ({ article }) => {
   )
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://10.79.166.91:3002/')
+    ws.current = new WebSocket('ws://localhost:3002/')
 
     ws.current.onopen = function () {
       console.log('open')
     }
+
+    return () => ws.current.close()
   }, [])
 
   useEffect(() => {

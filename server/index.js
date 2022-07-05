@@ -6,7 +6,7 @@ const wss = new WebSocketServer({
 
 const users = []
 
-wss.on('connection', function connection(ws, req) {
+wss.on('connection', (ws, req) => {
   console.log('server connected')
 
   const ip = req.socket.remoteAddress
@@ -34,4 +34,8 @@ wss.on('connection', function connection(ws, req) {
       }
     })
   })
+})
+
+wss.on('close', () => {
+  console.log('disconnected')
 })
