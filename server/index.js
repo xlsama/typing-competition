@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws'
 
 const wss = new WebSocketServer({
-  port: 3002,
+  port: 3012,
 })
 
 const users = []
