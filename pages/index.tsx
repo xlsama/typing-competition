@@ -118,7 +118,7 @@ const Home: NextPage<Props> = ({ article }) => {
   )
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:3002/')
+    ws.current = new WebSocket('ws://xlsama.com:3002/')
 
     ws.current.onopen = function () {
       console.log('open')
