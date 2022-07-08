@@ -4,7 +4,7 @@ const wss = new WebSocketServer({
   port: 3012,
 })
 
-const users = []
+let users = []
 
 wss.on('connection', (ws, req) => {
   console.log('server connected')
@@ -17,6 +17,11 @@ wss.on('connection', (ws, req) => {
       ip,
     })
   }
+
+  ws.on('close', () => {
+    console.log('closed')
+    users = users.filter(user => user.ip !== ip)
+  })
 
   ws.on('message', async function message(data) {
     let result = { data: data.toString() }
@@ -34,8 +39,4 @@ wss.on('connection', (ws, req) => {
       }
     })
   })
-})
-
-wss.on('close', () => {
-  console.log('disconnected')
 })
